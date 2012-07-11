@@ -8,7 +8,8 @@
     [clj-time.core :as time]
     [clj-time.local :as time-l]
     [clj-time.coerce :as time-c]
-    [clj-time.format :as time-f]))
+    [clj-time.format :as time-f])
+  (:import (java.util Date)))
   
 (def ^:const url-domain "http://metrarail.com/content/metra/en/home/jcr:content/trainTracker.lataexport.html")
 (def ^:const url-tracker "http://12.205.200.243/AJAXTrainTracker.svc/GetAcquityTrainData")
@@ -23,7 +24,7 @@
 ;; return java Date from "/Date(<timestamp>)/" with an actual date
 ;; have to handle negative ints due to API oddity
 (defn decode-date [date-str]
-  (time-c/from-long (Long/valueOf
+  (Date. (Long/valueOf
     (re-find #"-{0,1}\d+" date-str))))
 
 ;; turn map of 3 upcoming trains into sequence of trains
@@ -85,7 +86,9 @@
 
 (defn delay-interval [train]
   "returns delay in minutes"
-  (time/interval (scheduled train) (estimated train)))
+  (time/interval   
+    (time-c/from-date (scheduled train)) 
+    (time-c/from-date (estimated train))))
 
 (defn delayed? [train]
   "true if positive and delay exceeds a threshold"
@@ -94,7 +97,8 @@
 
 (defn str-train-time [datetime]
   "print hour:minute for train"
-  (time-f/unparse (time-f/formatters :hour-minute) datetime))
+  (time-l/format-local-time 
+    (time-l/to-local-date-time datetime) :hour-minute))
     
 (defn print-train-details [train]
   "print delay information for trains"
