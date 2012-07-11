@@ -15,24 +15,24 @@
 (def ^:const url-tracker "http://12.205.200.243/AJAXTrainTracker.svc/GetAcquityTrainData")
 (def ^:const delay-threshold-minutes 30)
 
-;; turn a java Calendar into an API friendly Date string
-(defn encode-date [datetime]
+(defn- encode-date [datetime]
+  "turn a java Calendar into an API friendly Date string"
   (str "/Date(" (time/in-msecs 
     (time/interval (time/epoch) datetime)) "-0000)/"))
 
 
 ;; return java Date from "/Date(<timestamp>)/" with an actual date
 ;; have to handle negative ints due to API oddity
-(defn decode-date [date-str]
+(defn- decode-date [date-str]
   (Date. (Long/valueOf
     (re-find #"-{0,1}\d+" date-str))))
 
-;; turn map of 3 upcoming trains into sequence of trains
-(defn seq-trains [trains] 
+(defn- seq-trains [trains] 
+  "turn map of 3 upcoming trains into sequence of trains"
   (seq
     [(:train1 trains) (:train2 trains) (:trains3 trains)]))
 
-(defn tracker_payload [line origin destination] 
+(defn- tracker_payload [line origin destination] 
   (json/encode
     {:stationRequest 
       {:Corridor (.toUpperCase line) 
@@ -55,7 +55,7 @@
   true))
 
 ;; extract lines station {:line->(station)} from html
-(defn parse-lines-stations [html]
+(defn- parse-lines-stations [html]
   (let [pairs (string/split (string/trim (re-find #"\n\S.+" html)) #"<br \/>")]
     (map
       (fn [pair]
@@ -95,12 +95,12 @@
   (let [m (time/in-minutes (delay-interval train))]
     (and (> m 0) (> m delay-threshold-minutes))))
 
-(defn str-train-time [datetime]
+(defn- str-train-time [datetime]
   "print hour:minute for train"
   (time-l/format-local-time 
     (time-l/to-local-date-time datetime) :hour-minute))
     
-(defn print-train-details [train]
+(defn- print-train-details [train]
   "print delay information for trains"
   (do
     (if (available? train) (println 
