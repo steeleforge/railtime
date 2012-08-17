@@ -148,4 +148,4 @@
       :else (println banner)
     )))
 
-;;curl -H "Content-Type: application/json" -d "{\"stationRequest\":{\"Corridor\":\"UP-N\",\"Destination\":\"OTC\",\"Origin\":\"EVANSTON\",\"timestamp\":\"/Date(1341469669133-0000)/\"}}" "http://12.205.200.243/AJAXTrainTracker.svc/GetAcquityTrainData"clear
+;;curl -H "Content-Type: application/json" -d "{\"stationRequest\":{\"Corridor\":\"UP-N\",\"Destination\":\"OTC\",\"Origin\":\"EVANSTON\",\"timestamp\":\"/Date(1341469669133-0000)/\"}}" "http://12.205.200.243/AJAXTrainTracker.svc/GetAcquityTrainData"
